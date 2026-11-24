@@ -61,6 +61,37 @@ public class DataGenerator {
         }
     }
 
+    public void withRecord(String user, String date, String category, String amount
+    ) {
+        try {
+            Files.createDirectories(DATA_DIR);
+
+            String record = "%s,%s,%s,%s%n".formatted(
+                    user, date, category, amount
+            );
+            appendData(record);
+
+        } catch (IOException e) {
+            throw new UncheckedIOException(
+                    "Failed to append transaction record", e
+            );
+        }
+    }
+
+    public void withInvalidDelimiter(String user, String date, String category, BigDecimal amount) {
+        try {
+            Files.createDirectories(DATA_DIR);
+
+            String record = formatInvalidRecord(user, date, category, amount);
+            appendData(record);
+
+        } catch (IOException e) {
+            throw new UncheckedIOException(
+                    "Failed to append transaction record with invalid delimiter", e
+            );
+        }
+    }
+
     // Alice,2025-01-15,food,1200.00
     private String generateRecord() {
         String user = USERS[RANDOM.nextInt(USERS.length)];
@@ -82,6 +113,15 @@ public class DataGenerator {
 
     private String formatRecord(String user, String date, String category, BigDecimal amount) {
         return "%s,%s,%s,%s%n".formatted(
+                user,
+                date,
+                category,
+                amount.setScale(2, RoundingMode.HALF_UP)
+        );
+    }
+
+    private String formatInvalidRecord(String user, String date, String category, BigDecimal amount) {
+        return "%s;%s;%s;%s%n".formatted(
                 user,
                 date,
                 category,

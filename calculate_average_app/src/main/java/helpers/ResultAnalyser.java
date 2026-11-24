@@ -24,6 +24,9 @@ public class ResultAnalyser {
     private static final int AVERAGE_AMOUNT_INDEX = 2;
     private static final int EXPECTED_COLUMNS = 3;
 
+    private static final String EXPECTED_HEADER =
+            "user,month,average_spending";
+
     List<AverageRecord> records;
 
     public void assertError(ScriptResult result, String expectedError) {
@@ -36,6 +39,23 @@ public class ResultAnalyser {
                 "Expected error: " + expectedError
                         + ", but actual output was: " + result.getOutput()
         );
+    }
+
+    public void assertCorrectHeader(){
+        try {
+            String actualHeader = Files.readAllLines(RESULT_FILE)
+                    .stream()
+                    .findFirst()
+                    .orElse("");
+
+            assertEquals(EXPECTED_HEADER, actualHeader,
+                    "CSV file contains an incorrect header");
+
+        } catch (IOException e) {
+            throw new UncheckedIOException(
+                    "Failed to read result file header", e
+            );
+        }
     }
 
     public void assertRecord(String user, String month, BigDecimal expectedAverageAmount) {

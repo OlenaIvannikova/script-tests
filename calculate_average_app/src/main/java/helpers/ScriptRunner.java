@@ -23,7 +23,7 @@ public class ScriptRunner {
     public ScriptResult executeScript(Path inputFile) {
         // Проверяем, что путь не равен null
         if (inputFile == null) {
-            return new ScriptResult(-1, "Input file cannot be null");
+            return new ScriptResult(-1, "Input file cannot be null", 0);
         }
 
         try {
@@ -44,6 +44,8 @@ public class ScriptRunner {
             // Объединяем два потока: stdout (обычный вывод) и stderr (вывод ошибок)
             processBuilder.redirectErrorStream(true);
 
+            long startTime = System.nanoTime();
+
             // Запускаем процесс
             Process process = processBuilder.start();
 
@@ -58,22 +60,24 @@ public class ScriptRunner {
                 // waitFor() ожидает завершения внешнего процесса
                 int exitCode = process.waitFor();
 
-                return new ScriptResult(exitCode, output);
+                long executionTimeMillis =
+                        (System.nanoTime() - startTime) / 1_000_000;
+
+                return new ScriptResult(exitCode, output, executionTimeMillis);
 
             } catch (InterruptedException e) {
                 process.destroyForcibly(); //   // Принудительно завершает внешний процесс
                 Thread.currentThread().interrupt(); // восстанавливаем флаг прерывания
 
-                return new ScriptResult(
-                        -1,
-                        "Script execution was interrupted"
-                );
+                long executionTimeMillis = (System.nanoTime() - startTime) / 1_000_000;
+
+                return new ScriptResult(-1, "Script execution was interrupted", executionTimeMillis);
             }
 
         }
         // Если файл отсутствует или процесс не удалось запустить, возвращаем результат с кодом -1
         catch (IOException | IllegalArgumentException e) {
-            return new ScriptResult(-1, e.getMessage());
+            return new ScriptResult(-1, e.getMessage(), 0);
         }
     }
 

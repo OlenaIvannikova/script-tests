@@ -3,16 +3,17 @@ import helpers.DataGenerator;
 import helpers.ResultAnalyser;
 import helpers.ScriptRunner;
 
-import java.math.BigDecimal;
-import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TestScenario {
 
-    private DataGenerator dataGenerator;
-    private ScriptRunner scriptRunner;
-    private ResultAnalyser resultAnalyser;
+    public final DataGenerator dataGenerator;
+    public final ScriptRunner scriptRunner;
+    public final ResultAnalyser resultAnalyser;
 
-    private ScriptResult scriptResult;
+    public ScriptResult scriptResult;
+    public List<ScriptResult> scriptResults = new ArrayList<>();
 
     public TestScenario() {
         this.dataGenerator = new DataGenerator();
@@ -20,48 +21,8 @@ public class TestScenario {
         this.resultAnalyser = new ResultAnalyser();
     }
 
-    public TestScenario given() {
+    public GivenStep given() {
         System.out.println("Initializing data..");
-        return this;
-    }
-
-    public TestScenario generateRecords(int num) {
-        dataGenerator.generateRecords(num);
-        return this;
-    }
-
-    public TestScenario withRecord(String user, String date, String category, BigDecimal amount) {
-        dataGenerator.withRecord(user, date, category, amount);
-        return this;
-    }
-
-    public TestScenario when() {
-        System.out.println("Executing actions..");
-        return this;
-    }
-
-    public TestScenario executeScript() {
-        scriptResult = scriptRunner.executeScript();
-        return this;
-    }
-
-    public TestScenario executeScript(Path filePath) {
-        scriptResult = scriptRunner.executeScript(filePath);
-        return this;
-    }
-
-    public TestScenario then() {
-        System.out.println("Check results..");
-        return this;
-    }
-
-    public TestScenario containsRecord(String user, String month, BigDecimal averageAmount) {
-        resultAnalyser.assertRecord(user, month, averageAmount);
-        return this;
-    }
-
-    public TestScenario containsError(String error) {
-        resultAnalyser.assertError(scriptResult, error);
-        return this;
+        return new GivenStep(this);
     }
 }
