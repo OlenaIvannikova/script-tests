@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>calculate_average_app</module>
+        <module>check_active_users_app</module>
     </modules>
 
     <properties>

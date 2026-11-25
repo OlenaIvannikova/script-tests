@@ -1,4 +1,4 @@
-# Functional test suite
+# Functional test suites
 
 ## Suite 1: Input validation tests (проверка передачи и обработки формата данных)
 1) Разделители ,
@@ -37,11 +37,11 @@
 ### Точность вычисления
 1) Юзер тратил несколько раз дробное значения
 
-# Suite 3: Output validation tests (проверка выходного формата)
+## Suite 3: Output validation tests (проверка выходного формата)
 1) Формат CSV ,
 2) Первая колонка: user
 3) Вторая колонка: месяц
 4) Третья колонка: среднее количество затрат
 5) Обработка негативных кейсов: понятное сообщение об ошибке 
 
-# Suite 4: Execution parameters tests
+## Suite 4: Execution parameters tests
