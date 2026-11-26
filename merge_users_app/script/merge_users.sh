@@ -1,0 +1,40 @@
+#!/bin/bash
+
+TXT_FILE=$1
+JSON_FILE=$2
+CSV_FILE=$3
+
+if [[ ! -f "$TXT_FILE" || ! -f "$JSON_FILE" || ! -f "$CSV_FILE" ]]; then
+    echo "Один из входных файлов не найден"
+    exit 1
+fi
+
+# Временный файл для email
+declare -A EMAILS
+
+# Чтение CSV
+while IFS=',' read -r login email; do
+    login=${login%$'\r'}
+    email=${email%$'\r'}
+
+    EMAILS["$login"]="$email"
+done < <(tail -n +2 "$CSV_FILE")
+
+# Генерация заголовка
+echo "login,name,email" > full_users.csv
+
+# Проход по TXT
+while IFS= read -r login || [[ -n "$login" ]]; do
+    login=${login%$'\r'}
+
+    name=$(jq -r --arg login "$login" '.[$login] // empty' "$JSON_FILE")
+    email=${EMAILS[$login]}
+
+    if [[ -n "$name" && -n "$email" ]]; then
+        echo "$login,$name,$email" >> full_users.csv
+    else
+        echo "⚠️ Пропущен пользователь $login: нет имени или email"
+    fi
+done < "$TXT_FILE"
+
+echo "✅ Готово: full_users.csv"
