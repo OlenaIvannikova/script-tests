@@ -4,10 +4,12 @@ public class ScriptResult {
 
     private int exitCode;
     private String output;
+    private long executionTimeMillis;
 
-    public ScriptResult(int exitCode, String output) {
+    public ScriptResult(int exitCode, String output, long executionTimeMillis) {
         this.exitCode = exitCode;
         this.output = output;
+        this.executionTimeMillis = executionTimeMillis;
     }
 
     public boolean isSuccess() {
@@ -16,5 +18,13 @@ public class ScriptResult {
 
     public String getOutput() {
         return output;
+    }
+
+    public int getExitCode() {
+        return exitCode;
+    }
+
+    public long getExecutionTimeMillis() {
+        return executionTimeMillis;
     }
 }
